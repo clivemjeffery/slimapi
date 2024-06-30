@@ -14,4 +14,5 @@ $cnt->register(new DI\Slim());
 
 /** @var App $app */
 $app = $cnt->get(App::class);
+// $app->setBasePath('/tryslimapi'); // CJ required on server, move to config
 $app->run();
