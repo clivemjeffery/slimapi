@@ -15,6 +15,7 @@ use UMA\DIC\Container;
 use UMA\DIC\ServiceProvider;
 use UMA\DoctrineDemo\Action\CreateUser;
 use UMA\DoctrineDemo\Action\ListUsers;
+use UMA\DoctrineDemo\Action\ListCandidates;
 
 /**
  * A ServiceProvider for registering services related
@@ -41,6 +42,12 @@ final readonly class Slim implements ServiceProvider
             );
         });
 
+        $c->set(ListCandidates::class, static function(ContainerInterface $c): RequestHandlerInterface {
+            return new ListCandidates(
+                $c->get(EntityManager::class)
+            );
+        });
+
         $c->set(App::class, static function (ContainerInterface $c): App {
             /** @var array $settings */
             $settings = $c->get('settings');
@@ -56,6 +63,7 @@ final readonly class Slim implements ServiceProvider
             $app->add(new ContentLengthMiddleware());
 
             $app->get('/users', ListUsers::class);
+            $app->get('/candidates', ListCandidates::class);
             $app->post('/users', CreateUser::class);
 
             return $app;
