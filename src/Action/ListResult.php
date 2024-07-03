@@ -26,7 +26,7 @@ final readonly class ListResult implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $query = $this->em->createQuery('SELECT c.name, c.party, count(v.id) as polled FROM UMA\DoctrineDemo\Domain\Candidate c JOIN c.votes v GROUP BY c.id ORDER BY count(v.id) DESC');
+        $query = $this->em->createQuery('SELECT c.name, c.party, count(v.id) as polled FROM UMA\DoctrineDemo\Domain\Candidate c LEFT OUTER JOIN c.votes v GROUP BY c.id ORDER BY count(v.id) DESC');
         $result = $query->getResult();
 
         $body = Psr7\Stream::create(json_encode($result, JSON_PRETTY_PRINT) . PHP_EOL);
