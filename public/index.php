@@ -14,12 +14,12 @@ $cnt->register(new DI\Slim());
 
 /** @var App $app */
 $app = $cnt->get(App::class);
-// $app->setBasePath('/tryslimapi'); // CJ required on server, move to config
+//$app->setBasePath('/tryslimapi'); // CJ required on server, move to config
+$app->setBasePath(''); // CJ required on dev, move to config
 
 $app->options('/{routes:.+}', function ($request, $response, $args) {
     return $response;
 });
-
 
 
 $app->run();

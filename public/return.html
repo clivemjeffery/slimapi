@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Norton CP School Parallel Election</title>
+    <script src="https://kit.fontawesome.com/4d95d0fd29.js" crossorigin="anonymous" defer></script>
+    <script src="//unpkg.com/alpinejs" defer></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css">
+  </head>
+  <body>
+  <section class="section">
+    <div class="container">
+        <h1 class="title">Candidates in the Election</h1>
+        <div
+            x-cloak
+            x-data="{candidates: [], isLoading: true}"
+            x-init="fetch('result')
+            .then(response => response.json())
+            .then(response => { candidates = response; isLoading = false; console.log(response); })"
+        >
+        
+            <div x-show="isLoading">Loading...</div>
+            <table class="table">
+                <tr>
+                    <th>Name</th>
+                    <th>Party</th>
+                    <th>Polled</th>
+                </tr>
+                <template x-for="candidate in candidates">
+                    <tr>
+                        <td x-text="candidate.name"></td>
+                        <td x-text="candidate.party"></td>
+                        <td x-text="candidate.polled"></td>
+                    </tr>
+                </template>
+            </table>
+        </div>
+    </div>
+    
+  </section>
+  </body>
+
+</html>

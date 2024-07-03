@@ -10,6 +10,9 @@ use Doctrine\ORM\Mapping\Entity;
 use Doctrine\ORM\Mapping\GeneratedValue;
 use Doctrine\ORM\Mapping\Id;
 use Doctrine\ORM\Mapping\Table;
+use Doctrine\ORM\Mapping\OneToMany;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use JsonSerializable;
 
 #[Entity, Table(name: 'candidates')]
@@ -24,11 +27,21 @@ final readonly class Candidate implements JsonSerializable
     #[Column(type: 'string', unique: true, nullable: false)]
     private string $party;
 
+    #[OneToMany(targetEntity: Vote::class, mappedBy: 'candidate', cascade: ['persist'])]
+    private Collection $votes;
+
     public function __construct(string $name, string $party)
     {
         $this->name = $name;
         $this->party = $party;
-        
+        $this->votes = new ArrayCollection();
+    }
+
+    public function receiveVote() : void
+    {
+        $vote = new Vote;
+        $vote->setCandidate($this);
+        $this->votes->add($vote);
     }
 
     public function getId(): int
@@ -44,6 +57,11 @@ final readonly class Candidate implements JsonSerializable
     public function getParty(): string
     {
         return $this->party;
+    }
+
+    public function getVotes(): Collection
+    {
+        return $this->votes;
     }
 
     /**

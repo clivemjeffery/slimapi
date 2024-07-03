@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello Bulma!</title>
+    <title>Norton CP School Parallel Election</title>
     <script src="https://kit.fontawesome.com/4d95d0fd29.js" crossorigin="anonymous" defer></script>
     <script src="//unpkg.com/alpinejs" defer></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.1/css/bulma.min.css">
@@ -11,39 +11,76 @@
   <body>
   <section class="section">
     <div class="container">
-      
-        <h1 class="title">Candidates</h1>
+        <h1 class="title">Candidates in the Election</h1>
         <div
             x-cloak
-            x-data="{candidates: [], 'isLoading': true}"
+            x-data="{candidates: [], candidate: null, marked: false, paused: false, isLoading: true}"
             x-init="fetch('candidates')
             .then(response => response.json())
             .then(response => { candidates = response; isLoading = false; console.log(response); })"
         >
-        <div x-show="isLoading">Loading...</div>
-        <table class="table" x-show="!isLoading">
-            <tr>
-                <th>Mark</th>
-                <th>Name</th>
-                <th>Party</th>
-            </tr>
-            <template x-for="candidate in candidates" :key="candidate.id">
+        
+            <div x-show="isLoading">Loading...</div>
+            <table class="table">
                 <tr>
-                    <td>
-                        <button class="button">
-                            <span class="icon is-large">
-                                
-                            </span>
-                        </button>
-                    </td>
-                    <td x-text="candidate.name"></td>
-                    <td x-text="candidate.party"></td>
+                    <th>Mark</th>
+                    <th>Name</th>
+                    <th>Party</th>
                 </tr>
-            </template>
-        </table>
-
+                <template x-for="candidate in candidates">
+                    <tr>
+                        <td>
+                            <button class="button"
+                                @click="markBallot(candidate.id); marked = true">
+                                <span class="icon is-large">
+                                    <i class="fa-solid fa-x"
+                                        x-bind:id="candidate.id"
+                                        x-show="false"></i>
+                                </span>
+                            </button>
+                        </td>
+                        <td x-text="candidate.name"></td>
+                        <td x-text="candidate.party"></td>
+                    </tr>
+                </template>
+            </table>
+        
+            <button
+                class="button is-success is-large"
+                x-data
+                x-bind:disabled="!marked"
+                @click="doVote(); marked = false; paused = true">Vote</button>
+            
+                <span x-show="paused"
+                    x-effect="if (paused) setTimeout(function() {paused = false}, 8000)">
+                    Thank you for voting. Please leave the booth now.
+                </span>
+                
+                
+                    
+        </div>
     </div>
-    <button class="button is-success is-large">Vote</button>
+    
   </section>
   </body>
+
+  <script>
+    function markBallot(candidate_id) {
+        //console.log(`selected id = ${candidate_id}`);
+        candidate = candidate_id;
+        const marks = document.getElementsByTagName('i');
+        for (const mark of marks) {
+            //console.log(mark.id);
+            mark.style.display = (mark.id == candidate_id) ? 'block' : 'none'; 
+        }
+    }
+    function doVote() {
+        console.log(`Voting for ${candidate}`);
+        fetch(`vote/${candidate}`, { method: 'PUT' })
+            .then(response => response.json())
+            .then(response => { console.log(response) } );
+        markBallot(-1);
+    }
+  </script>
+
 </html>
